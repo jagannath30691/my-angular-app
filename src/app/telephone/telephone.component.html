@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="col-md-6">
+    <div class="card teleBox">
+      <div class="card-body">
+        <!-- <h5 class="card-title">Telphone Validation And Random String Generation</h5> -->
+        <div class="form-group">
+          <label for="phoneNumber">Telephone Number</label>
+          <input type="number" name="phoneNumber" id="phoneNumber" class="form-control" required
+            [(ngModel)]="phoneNumber" (keyup)="generateSamplesOfInput()" #name="ngModel">
+        </div>
+        <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-danger">
+          <div *ngIf="name.errors.required">
+            Telephone number is required.
+          </div>
+        </div>
+        <ul>
+          <li *ngFor="let char of combinations">{{char}}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
