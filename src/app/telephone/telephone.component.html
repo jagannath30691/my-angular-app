@@ -17,13 +17,14 @@
     <div *ngIf="inputErrors" class="alert alert-danger">
       {{errorMessage}}
     </div>
-    <div *ngIf="combinations.length" class="alert alert-success">
+    <div *ngIf="totalPages" class="alert alert-success">
       Total Count: {{combinationsCount}} | Showing {{firstShownRecordNumber}} to {{lastShownRecordNumber}}
     </div>
-    <nav *ngIf="combinations.length">
+    <nav *ngIf="totalPages">
       <ul class="pagination">
-        <li class="page-item"><a class="page-link" (click)="getPage('Previous')">Previous</a></li>
-        <li class="page-item"><a class="page-link" (click)="getPage('Next')">Next</a></li>
+        <li class="page-item cursor"><a class="page-link" (click)="getPage('Previous')">Previous</a></li>
+        <li class="page-item" *ngFor="let num of paginationList"><a class="page-link" (click)="getPageByNumber(num)">{{num}}</a></li>
+        <li class="page-item cursor"><a class="page-link" (click)="getPage('Next')">Next</a></li>
       </ul>
     </nav>
     <ul class="list-group">
