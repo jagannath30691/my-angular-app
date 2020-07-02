@@ -11,11 +11,9 @@ const calculateEndpoint = '/calculator/calculate';
 export class TelephoneComponent implements OnInit {
 
   phoneNumber: number;
-  // combinations: Array<string>;
   inputErrors: boolean;
   errorMessage: string;
   currentPageCombinations: Array<string>;
-  // offset: number;
   limit: number;
   combinationsCount: number;
   firstShownRecordNumber: number;
@@ -30,9 +28,7 @@ export class TelephoneComponent implements OnInit {
   ngOnInit() {
     this.inputErrors = false;
     this.errorMessage = '';
-    // this.offset = 1;
     this.limit = 100;
-    // this.combinations = [];
     this.combinationsCount = 0;
     this.currentPageCombinations = [];
     this.pageNumber = 1;
@@ -42,23 +38,6 @@ export class TelephoneComponent implements OnInit {
     this.paginationList = [1, 2, 3, 4, 5];
     this.paginationSize = 5;
   }
-
-  // getPage(type: string) {
-  //   if (type === 'Next') {
-  //     console.log('type', type);
-  //     if (this.offset + this.limit < this.combinationsCount) {
-  //       this.offset = this.offset + this.limit;
-  //     }
-  //   }
-  //   if (type === 'Previous') {
-  //     console.log('type', type);
-  //     const nextOffset = this.offset - this.limit;
-  //     this.offset = (nextOffset >= 1) ? nextOffset : 1;
-  //   }
-  //   console.log('offset', this.offset);
-  //   this.currentPageCombinations = this.getPageCombinations();
-  //   console.log('currentPageCombinations', this.currentPageCombinations);
-  // }
 
   getPageByNumber(pageNumber: number) {
     this.pageNumber = pageNumber;
@@ -104,23 +83,12 @@ export class TelephoneComponent implements OnInit {
       this.currentPageCombinations = result.phoneNbrs;
       this.combinationsCount = result.totalCount;
       this.totalPages = result.totalPages;
-      this.previousPage = result.previous.pageNumber;
-      this.nextPage = result.next.pageNumber;
+      this.previousPage = result.previous ? result.previous.pageNumber: this.previousPage;
+      this.nextPage = result.next ? result.next.pageNumber : this.nextPage;
       this.firstShownRecordNumber = (this.pageNumber * this.limit) - this.limit + 1
       this.lastShownRecordNumber = (this.pageNumber * this.limit);
     });
   }
-
-  // getPageCombinations() {
-  //   let lastIndex = this.offset + this.limit - 1;
-  //   const computingOffset = this.offset;
-  //   if (this.combinationsCount < this.offset + this.limit - 1) {
-  //     lastIndex = this.combinationsCount;
-  //   }
-  //   this.firstShownRecordNumber = computingOffset;
-  //   this.lastShownRecordNumber = lastIndex;
-  //   return this.combinations.slice(computingOffset - 1, lastIndex);
-  // }
 
   generateSamplesOfInput() {
     this.inputErrors = false;
@@ -137,13 +105,6 @@ export class TelephoneComponent implements OnInit {
       return;
     }
     this.getPage('First');
-    // this.apiAccess.postRequest(endPoint, payload).subscribe(result => {
-    //   this.combinations = result.phoneNbrs;      
-    //   this.combinationsCount = result.totalCount;
-    //   this.totalPages = result.totalPages;
-    //   // this.offset = 1;
-    //   // this.currentPageCombinations = this.getPageCombinations();
-    // });
   }
   constructor(private apiAccess: ApiAccessService) { }
 }

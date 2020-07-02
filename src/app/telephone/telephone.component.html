@@ -2,7 +2,6 @@
   <div class="col-md-7">
     <div class="card teleBox">
       <div class="card-body">
-        <!-- <h5 class="card-title">Telphone Validation And Random String Generation</h5> -->
         <div class="form-group">
           <label for="phoneNumber">Telephone Number</label>
           <input type="number" name="phoneNumber" id="phoneNumber" class="form-control" required
@@ -22,9 +21,9 @@
     </div>
     <nav *ngIf="totalPages">
       <ul class="pagination">
-        <li class="page-item cursor"><a class="page-link" (click)="getPage('Previous')">Previous</a></li>
+        <li class="page-item cursor"><button class="page-link" [disabled]="pageNumber === 1" (click)="getPage('Previous')">Previous</button></li>
         <li class="page-item" *ngFor="let num of paginationList"><a class="page-link" (click)="getPageByNumber(num)">{{num}}</a></li>
-        <li class="page-item cursor"><a class="page-link" (click)="getPage('Next')">Next</a></li>
+        <li class="page-item cursor"><button class="page-link" [disabled]="pageNumber === totalPages" (click)="getPage('Next')">Next</button></li>
       </ul>
     </nav>
     <ul class="list-group">
