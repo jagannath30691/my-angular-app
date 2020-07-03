@@ -35,7 +35,6 @@ export class TelephoneComponent implements OnInit {
     this.totalPages = 0;
     this.previousPage = 0;
     this.nextPage = 0;
-    this.paginationList = [1, 2, 3, 4, 5];
     this.paginationSize = 5;
   }
 
@@ -44,32 +43,35 @@ export class TelephoneComponent implements OnInit {
     this.getPage('Page');
   }
 
+  changePagination(type: string) {
+    let paginationList = this.paginationList.map(i => {
+      return (type === 'Next') ? i + 5 : i - 5;
+    }).filter(j => {
+      return (j >= 1 && j <= this.totalPages);
+    });
+    if (this.totalPages >= 5) {
+      if (paginationList.length < 5 && paginationList[paginationList.length - 1] === this.totalPages) {
+        paginationList = [];
+        for (let i = 1; i <= 5; i++) {
+          paginationList.push(this.totalPages - 5 + i);
+        }
+      }
+      if (paginationList.length < 5 && paginationList[0] === 1) {
+        paginationList = [];
+        for (let i = 1; i <= 5; i++) {
+          paginationList.push(i);
+        }
+      }
+    }
+    this.paginationList = paginationList;
+  }
+
   getPage(type: string) {
     if (type === 'First') {
       this.pageNumber = 1;
-    }
-    if (type === 'Next') {
-      this.pageNumber = (this.nextPage > this.totalPages) ? this.totalPages : this.nextPage;
-    }
-    if (type === 'Previous') {
-      this.pageNumber = (this.previousPage <= 0) ? 1 : this.previousPage;
-    }
-    if (['Next', 'Previous'].includes(type)) {
-      this.changePagination(type);
+      this.paginationList = [1, 2, 3, 4, 5];
     }
     this.makePageApiRequest();
-  }
-
-  changePagination(type: string) {
-    const paginationList = [];
-    console.log('page', this.pageNumber);
-    let i = this.pageNumber;
-    const j = i + this.paginationSize - 1;
-    while(i <= j) {
-      paginationList.push(i);      
-      i++;
-    }
-    this.paginationList = paginationList;
   }
 
   makePageApiRequest() {
@@ -78,21 +80,20 @@ export class TelephoneComponent implements OnInit {
     };
     const pageNumber = this.pageNumber;
     const pageSize = this.limit;
-    const endPoint = `${calculateEndpoint}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+    const endPoint = `${calculateEndpoint}?pageNumber=${pageNumber - 1}&pageSize=${pageSize}`;
     this.apiAccess.postRequest(endPoint, payload).subscribe(result => {
       this.currentPageCombinations = result.phoneNbrs;
       this.combinationsCount = result.totalCount;
       this.totalPages = result.totalPages;
-      this.previousPage = result.previous ? result.previous.pageNumber: this.previousPage;
-      this.nextPage = result.next ? result.next.pageNumber : this.nextPage;
-      this.firstShownRecordNumber = (this.pageNumber * this.limit) - this.limit + 1
-      this.lastShownRecordNumber = (this.pageNumber * this.limit);
+      this.previousPage = result.previous ? (result.previous.pageNumber + 1) : this.previousPage;
+      this.nextPage = result.next ? (result.next.pageNumber + 1) : this.nextPage;
+      this.firstShownRecordNumber = (this.pageNumber * this.limit) - this.limit + 1;
+      this.lastShownRecordNumber = (result.phoneNbrs.length === this.limit) ? (this.pageNumber * this.limit) : ((this.pageNumber * this.limit) - this.limit + result.phoneNbrs.length);
     });
   }
 
   generateSamplesOfInput() {
     this.inputErrors = false;
-    // this.combinations = [];
     if (!this.phoneNumber) {
       this.inputErrors = true;
       this.errorMessage = 'input should not be empty. It should be 7 or 10 digit long';
